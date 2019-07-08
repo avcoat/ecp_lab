@@ -13,7 +13,7 @@ Below are the files you will receive when you craete an account in ECP
 
 ### 1. [Install Kubectl](doc/KUBECTL.md)
 ### 2. [Setup Kubectl Config](doc/KUBECTL_CFG.md)
-### 3. [Kubectl basic concepts](doc/KUBECTL_CONCEPT.md)
+### 3. [Kubectl basic concepts](doc/K8_CONCEPT.md)
 ### 4. [Deploy First App](doc/KUBECTL_FIRST_APP.md)
 ### 5. [Know Your Env](doc/KUBECTL_CLUSTER.md)
 ### 6. [Use Image Repo](doc/ECP_REPO.md)
