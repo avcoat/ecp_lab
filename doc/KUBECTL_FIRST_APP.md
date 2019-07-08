@@ -58,3 +58,38 @@ Create a file `requirments` as:
 flask
 cherrypy
 ```
+Now we will create the dockerfile for our application   
+We will use multilayer dockerfile to reduce the size of final image  
+```Dockerfile
+FROM python:3.7-alpine as base
+FROM base as builder
+# We copy just the requirements.txt first to leverage Docker cache
+COPY ./requirements /install/requirements
+WORKDIR /install
+RUN pip install --install-option="--prefix=/install" -r requirements
+
+FROM base
+COPY --from=builder /install /usr/local
+RUN cp /usr/local/bin/python /usr/bin/python
+WORKDIR /app
+COPY app.py    .
+COPY server.py .
+EXPOSE 8080
+ENTRYPOINT [ "python" ]
+CMD [ "server.py" ]
+```
+Build the docker file 
+```
+docker build -t oe-tools/dummy-flask-app .
+docker run -p 8080:8080 oe-tools/dummy-flask-app
+```
+To test do
+```
+curl localhost:8080
+```
+
+### Push image to ecp repository
+Tag the image
+```
+docker tag oe-tools/dummy-flask-app 
+```
