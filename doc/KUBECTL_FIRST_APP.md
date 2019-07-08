@@ -89,7 +89,17 @@ curl localhost:8080
 ```
 
 ### Push image to ecp repository
-Tag the image
+Set your ecp repository password as
 ```
-docker tag oe-tools/dummy-flask-app 
+export DOCKER_PASS=<password>
 ```
+Tag, Login and Push
+```
+docker tag oe-tools/dummy-flask-app registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0
+echo $DOCKER_PASS | docker login --username=opseng --password-stdin registry-qcc.quantil.com
+docker push registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0
+```
+We successfully pushed our dummy app as `registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0` 
+
+
+### Create a deployment and deploy in ECP
