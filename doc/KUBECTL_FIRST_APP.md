@@ -79,13 +79,13 @@ ENTRYPOINT [ "python" ]
 CMD [ "server.py" ]
 ```
 Build the docker file 
-```
+```bash
 docker build -t oe-tools/dummy-flask-app .
 docker run -p 8080:8080 oe-tools/dummy-flask-app
 ```
 To test do
-```
-curl localhost:8080
+```bash
+curl "localhost:8080"
 ```
 
 ### Push image to ecp repository
@@ -94,12 +94,42 @@ Set your ecp repository password as
 export DOCKER_PASS=<password>
 ```
 Tag, Login and Push
-```
+```bash
 docker tag oe-tools/dummy-flask-app registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0
 echo $DOCKER_PASS | docker login --username=opseng --password-stdin registry-qcc.quantil.com
 docker push registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0
 ```
 We successfully pushed our dummy app as `registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0` 
-
+   
+Now to pull the image from ECP registry to kubernets cluster, we need to provide the username and password
+ECP uses fixed secret named `myregistrykey`
+```bash
+kubect create secret docker-registry myregistrykey \
+  --docker-email=swarvanu.sengupta@cdnetworks.co.kr \
+  --docker-username=opseng \
+  --docker-password=$DOCKER_PASS
+```
+or
+```
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/$CERT \
+   -v $KEY:/root/.kube/$KEY \
+   kubectl:2.2.2 create secret docker-registry myregistrykey \
+   --docker-email=swarvanu.sengupta@cdnetworks.co.kr \
+   --docker-username=opseng --docker-password=$DOCKER_PASS
+```
+You can verify the secret with 
+```bash
+kubect get secrets
+```
+or
+```bash
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/$CERT \
+   -v $KEY:/root/.kube/$KEY \
+   kubectl:2.2.2 get secrets
+```
 
 ### Create a deployment and deploy in ECP
+
+
