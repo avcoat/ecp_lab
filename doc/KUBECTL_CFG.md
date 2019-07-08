@@ -72,10 +72,10 @@ preferences: {}
    
 Overwrite the config
 ```
-mv <config> ~/.kube/config 
+mv <config> $HOME/.kube/config 
 ```
 
-Otherwise you can append the ecp config into the existing configuration:
+Otherwise you can append the ecp config into the existing configuration `$HOME/.kube/config` as:
 ```yaml
 apiVersion: v1
 clusters:
@@ -114,10 +114,10 @@ kind: Config
 preferences: {}
 ```
    
-Copy your cert file and key file to `~/.kube/`
+Copy your cert file and key file to `$HOME/.kube/`
 ```bash
-mv <cert_file> ~/.kube/opseng_cert.pem
-mv <key_file> ~/.kube/opseng_key.pem
+mv <cert_file> $HOME/.kube/opseng_cert.pem
+mv <key_file> $HOME/.kube/opseng_key.pem
 ```
 
 To check the configuration perform
@@ -127,11 +127,11 @@ kubectl get pods
 
 To run in docker
 ```bash
-cd ~/.kube/
-export CERT=opseng_cert.pem
-export PEM=opseng_key.pem
-docker run -v /$(pwd)/config:/root/.kube/config \
-   -v /$(pwd)/$CERT:/root/.kube/$CERT \
-   -v /$(pwd)/$KEY:/root/.kube/$KEY \
+export CERT=$HOME/.kube/opseng_cert.pem
+export PEM=$HOME/.kube/opseng_key.pem
+
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \ 
    kubectl:2.2.2 get pods
 ```
