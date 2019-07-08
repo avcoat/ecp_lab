@@ -128,6 +128,8 @@ kubectl get pods
 To run in docker
 ```bash
 cd ~/.kube/
+export CERT=opseng_cert.pem
+export PEM=opseng_key.pem
 docker run -v /$(pwd)/config:/root/.kube/config \
    -v /$(pwd)/$CERT:/root/.kube/$CERT \
    -v /$(pwd)/$KEY:/root/.kube/$KEY \
