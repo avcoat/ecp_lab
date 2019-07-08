@@ -9,6 +9,7 @@ Below are the files you will receive when you craete an account in ECP
 1. Certificate File
 2. Key file  
 2. Config File
+3. [kubectl rpm package](https://github.com/avcoat/docker-kubectl/raw/master/kubectl-2.2.2-1.el7.noarch.x86_64.rpm)
 
 ### 1. [Install Kubectl](doc/KUBECTL.md)
 ### 2. [Setup Kubectl Config](doc/KUBECTL_CFG.md)
