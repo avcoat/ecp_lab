@@ -112,8 +112,8 @@ kubect create secret docker-registry myregistrykey \
 or
 ```
 docker run -v $CONFIG:/root/.kube/config \
-   -v $CERT:/root/.kube/$CERT \
-   -v $KEY:/root/.kube/$KEY \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \ 
    kubectl:2.2.2 create secret docker-registry myregistrykey \
    --docker-email=swarvanu.sengupta@cdnetworks.co.kr \
    --docker-username=opseng --docker-password=$DOCKER_PASS
@@ -125,8 +125,8 @@ kubect get secrets
 or
 ```bash
 docker run -v $CONFIG:/root/.kube/config \
-   -v $CERT:/root/.kube/$CERT \
-   -v $KEY:/root/.kube/$KEY \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \ 
    kubectl:2.2.2 get secrets
 ```
 
