@@ -8,7 +8,7 @@ This is a lab for getting started with CDNW's ECP (Edge Computation Platform). Q
 Below are the files you will receive when you craete an account in ECP
 1. Certificate File
 2. Key file  
-2. Config File
+2. Server URL
 3. [kubectl rpm package](https://github.com/avcoat/docker-kubectl/raw/master/kubectl-2.2.2-1.el7.noarch.x86_64.rpm)
 
 ### 1. [Install Kubectl](doc/KUBECTL.md)
