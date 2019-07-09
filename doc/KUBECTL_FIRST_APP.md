@@ -132,4 +132,68 @@ docker run -v $CONFIG:/root/.kube/config \
 
 ### Create a deployment and deploy in ECP
 
+Create a deployment file for the `dummy-flask-app` as `dummy-flask-app.yml`
+```yml
+apiVersion: apps/v1 
 
+kind: Deployment
+
+metadata:
+    name: dummy-flask-app
+    namespace: opseng
+
+spec:
+    # Create replicated pod and manage using replication controller
+    replicas: 3
+
+    # defines how the Deployment finds which Pods to manage
+    selector:
+        matchLabels:
+            app: dummy-flask-app
+
+    # Template for the pods
+    template:
+        # set the metadata for pods, which labels to use
+        # same labels is used by selector in deployment
+        metadata:
+            labels:
+                app: dummy-flask-app
+        spec:
+            # the secret ECP will use to pull the image
+            imagePullSecrets:
+                - name: myregistrykey
+            containers:
+            # image in the qcc registry that we pushed earlier
+            - image: registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0
+              name: dummy-flask-app
+              resources:
+                  requests: 
+                      memory: "64Mi" 
+                      cpu: "100m"
+                  limits:
+                      memory: "128Mi"
+                      cpu: "200m"
+```
+We can deploy the deployment using 
+```bash
+kubectl create -f dummy-flask-app.yml
+```
+or 
+```bash
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \
+   -v $(PWD)/dummy-flask-app.yml:/dummy-flask-app.yml \
+   kubectl:2.2.2 create -f dummy-flask-app.yml
+```
+To verify the deployment
+```bash
+kubectl get deployments
+```
+or 
+```bash
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \
+   kubectl:2.2.2 get deployments
+```
