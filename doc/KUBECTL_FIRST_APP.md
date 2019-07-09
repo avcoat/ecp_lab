@@ -101,8 +101,8 @@ docker push registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0
 ```
 We successfully pushed our dummy app as `registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0` 
    
-Now to pull the image from ECP registry to kubernets cluster, we need to provide the username and password
-ECP uses fixed secret named `myregistrykey`
+Now to pull the image from ECP registry to kubernets cluster, we need to provide the username and password.  
+We can create a kubenerts secrets `myregistrykey` that we be used as `imagePullSecrets`. 
 ```bash
 kubect create secret docker-registry myregistrykey \
   --docker-server="registry-qcc.quantil.com" \
