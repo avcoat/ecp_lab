@@ -143,7 +143,9 @@ metadata:
     namespace: opseng
 
 spec:
-    # Create replicated pod and manage using replication controller
+    # Create replicated pod and manage using replica set
+    # Note: Dont use replication Controller to replicate PODS, 
+    #       Using replica set via deployments is the recomanded way
     replicas: 3
 
     # defines how the Deployment finds which Pods to manage
