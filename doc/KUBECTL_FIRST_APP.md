@@ -1,4 +1,4 @@
-### Create flask app
+## Create flask app
 First we will create a simple python3 Flask app
 This will response with `"Hello World!"`   
 Create a file `app.py` as:
@@ -88,7 +88,7 @@ To test do
 curl "localhost:8080"
 ```
 
-### Push image to ecp repository
+## Push image to ecp repository
 Set your ecp repository password as
 ```
 export DOCKER_PASS=<password>
@@ -130,7 +130,7 @@ docker run -v $CONFIG:/root/.kube/config \
    kubectl:2.2.2 get secrets
 ```
 
-### Create a deployment and deploy in ECP
+## Create a deployment and deploy in ECP
 
 Create a deployment file for the `dummy-flask-app` as `dummy-flask-app.yml`
 ```yml
