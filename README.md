@@ -16,7 +16,7 @@ Below are the files you will receive when you craete an account in ECP
 ### 3. [Basic concepts](doc/K8_CONCEPTS.md)
 ### 4. [Deploy First App](doc/KUBECTL_FIRST_APP.md)
 ### 5. [Know Your Env](doc/KUBECTL_CLUSTER.md)
-### 6. [Use Image Repo](doc/ECP_REPO.md)
+### 6. [Assign Public IP](doc/ECP_IP.md)
 ### 7. [Update App](doc/KUBECTL_UPDATE_APP.md)
 ### 8. [Basic Health Check](doc/HEALTHCHECK.md)
 ### 9. [Using Secrets](doc/SECRETS.md)
