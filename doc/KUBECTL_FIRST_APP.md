@@ -105,6 +105,7 @@ Now to pull the image from ECP registry to kubernets cluster, we need to provide
 ECP uses fixed secret named `myregistrykey`
 ```bash
 kubect create secret docker-registry myregistrykey \
+  --docker-server="registry-qcc.quantil.com" \
   --docker-email=swarvanu.sengupta@cdnetworks.co.kr \
   --docker-username=opseng \
   --docker-password=$DOCKER_PASS
@@ -115,8 +116,10 @@ docker run -v $CONFIG:/root/.kube/config \
    -v $CERT:/root/.kube/opseng_cert.pem \
    -v $KEY:/root/.kube/opseng_key.pem \ 
    kubectl:2.2.2 create secret docker-registry myregistrykey \
+   --docker-server="registry-qcc.quantil.com" \
    --docker-email=swarvanu.sengupta@cdnetworks.co.kr \
-   --docker-username=opseng --docker-password=$DOCKER_PASS
+   --docker-username=opseng \
+   --docker-password=$DOCKER_PASS
 ```
 You can verify the secret with 
 ```bash
