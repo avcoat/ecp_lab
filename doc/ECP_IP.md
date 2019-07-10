@@ -124,18 +124,28 @@ docker run -v $CONFIG:/root/.kube/config \
 ```
 Once updated you can check the assigned External IPs to corresponding pods in `Annotations`
 ```bash
-kubectl describe pods --selector="app=dummy-flask-app"
+kubectl describe pods --selector="app=dummy-flask-app" | grep externalIP
 ```
 or
 ```bash
 docker run -v $CONFIG:/root/.kube/config \
    -v $CERT:/root/.kube/opseng_cert.pem \
    -v $KEY:/root/.kube/opseng_key.pem \
-   kubectl:2.2.2 describe pods --selector="app=dummy-flask-app"
+   kubectl:2.2.2 describe pods --selector="app=dummy-flask-app" | grep externalIP
+```
+For pod you can get the public IP from the annotion `quantil.com/externalIP` 
+To avail the `External IP` to your container you can pass it by adding environment in Pod Template
+```yml
+        env:
+        - name: PUBLIC_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['quantil.com/externalIP']
 ```
 
 ### Access your APP
-Each of your PODs gets a different external IP's. Now you can use the IP to call your application 
+Each of your PODs gets a different external IP's. Now you can use one of these EXTERNAL_IP to call your application 
 ```
-curl <external_ip>:8080
+export dummyflaskapp=<EXTERNAL_IP>
+curl "$dummyflaskapp:8080"
 ```
