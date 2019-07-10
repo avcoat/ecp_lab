@@ -135,7 +135,7 @@ docker run -v $CONFIG:/root/.kube/config \
    kubectl:2.2.2 get pods --selector="app=dummy-flask-app" \
    -o jsonpath='{.items[*].metadata.annotations.quantil\.com/externalIP}'
 ```
-For pod you can get the public IP from the annotion `quantil.com/externalIP` 
+For pod you can get the public IP from the annotion `quantil.com/externalIP`   
 To avail the `External IP` to your container you can pass it by adding environment in Pod Template
 ```yml
         env:
