@@ -85,7 +85,7 @@ spec:
                       cpu: "200m"
 ```
 
-### Dealing With Reserve IP's
+### Dealing With Reserve IP's in Rollouts
 
 ECP IPool IPs are mapped to a POD until the pod dies. **Which makes rollout complecated**. Cause or the new pod template a new replica Set will be created. It will create the PODs first and try to assign the IP from IPool objects.   
 Now as all IP’s are already reserved we will get errors like below:
@@ -147,3 +147,4 @@ docker run -v $CONFIG:/root/.kube/config \
 ```
 
 #### 2. Consider having intermidiate RS
+#### 3. Stateful Set
