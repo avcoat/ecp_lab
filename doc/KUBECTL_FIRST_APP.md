@@ -202,3 +202,14 @@ docker run -v $CONFIG:/root/.kube/config \
    -v $KEY:/root/.kube/opseng_key.pem \
    kubectl:2.2.2 get deployments
 ```
+You can also check the deployment rollout status using
+```bash
+kubectl rollout status deployment.v1.apps/dummy-flask-app
+```
+or
+```bash
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \
+   kubectl:2.2.2 rollout status deployment.v1.apps/dummy-flask-app
+```
