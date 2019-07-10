@@ -29,5 +29,8 @@ As overviewed in the [official document](https://kubernetes.io/docs/concepts/)
 > ```
 > kubectl get deployments
 > ```
-
+> 6. [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
+>```
+> kubectl get sts
+>```
 
