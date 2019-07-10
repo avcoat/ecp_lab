@@ -37,6 +37,19 @@ docker push registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.5.0
 ```
 Once the image has been pushed successfully we can update the deployment by changing the `dummy-flask-app.yml`  
 We will update the image tag for container from `1.0.0` to `1.5.0`
+
+```yml
+            containers:
+            - image: registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.5.0
+```
+
+Although assigning public IP to deployments its not recomanded. Deployment are not for `stateful` resources such as unique network identifiers like Public IP.  
+We can continue with deployment update without public IP.  
+
+### Updating without Reserve Public IP's
+
+Update the deployment by changing the `dummy-flask-app.yml`
+
 ```yml
 apiVersion: apps/v1 
 
@@ -62,8 +75,6 @@ spec:
         metadata:
             labels:
                 app: dummy-flask-app
-            annotations:
-                quantil.com/ipool: dummy-flask-app-ipool
         spec:
             # the secret ECP will use to pull the image
             imagePullSecrets:
@@ -71,11 +82,6 @@ spec:
             containers:
             - image: registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.5.0
               name: dummy-flask-app
-              env:
-              - name: PUBLIC_IP # make public IP available to your container
-                valueFrom:
-                    fieldRef:
-                        fieldPath: metadata.annotations['quantil.com/externalIP']
               resources:
                   requests: 
                       memory: "64Mi" 
@@ -84,48 +90,11 @@ spec:
                       memory: "128Mi"
                       cpu: "200m"
 ```
-
-### Dealing With Reserve IP's in Rollouts
-
-ECP IPool IPs are mapped to a POD until the pod dies. **Which makes rollout complecated**. Cause or the new pod template a new replica Set will be created. It will create the PODs first and try to assign the IP from IPool objects.   
-Now as all IP’s are already reserved we will get errors like below:
-```bash
- Warning  FailedSchedulingIP  6s (x20 over 4m)  default-scheduler  Can't allocate ip from ipool dummy-flask-app-ipool.Error: Operation cannot be fulfilled on ipools "dummy-flask-app-ipool": ipool dummy-flask-app-ipool have not freeip
-```
-
-There are different ways to deal with this problem
-
-#### 1. Consider having one extra IP
-
-If we have a replica-count `n` then the reserved IP count should be `n+1`. In this way we always have an additional IP to assign a new pod. Although this might still cause scheduler to try starting a POD before killing one and causing the same problem. Although the scheduler will to retry again and eventually the IP's will be freed. 
-
-> This will cause one dangling IP    
-
-To increase the reserve IP count update `ip-pool.yml` as
-```yml
-apiVersion: v1
-kind: IPool
-metadata:
-   name: dummy-flask-app-ipool
-   namespace: opseng
-spec:
-   enableExternalIP: true # Optional. Set to “true” if static public IPV4 address is required 
-   enableIpv6ExternalIP: false #   Optional. Set to “true” if static public IPV6 address is required
-   counts: 4 # The count of static addresses needed. IPV4 and IPV6 addresses are counted separately.
-```
-Then apply the ipool object as
-```bash
-docker run -v $CONFIG:/root/.kube/config \
-   -v $CERT:/root/.kube/opseng_cert.pem \
-   -v $KEY:/root/.kube/opseng_key.pem \
-   -v $(PWD)/ip-pool.yml:/ip-pool.yml \                         
-   kubectl:2.2.2 apply -f ip-pool.yml
-```
-To update the deployment perform 
+To update the deployment perform
 ```bash
 kubectl apply -f dummy-flask-app.yml
 ```
-or 
+or,
 ```bash
 docker run -v $CONFIG:/root/.kube/config \
    -v $CERT:/root/.kube/opseng_cert.pem \
@@ -133,8 +102,8 @@ docker run -v $CONFIG:/root/.kube/config \
    -v $(PWD)/dummy-flask-app.yml:/dummy-flask-app.yml \
    kubectl:2.2.2 apply -f dummy-flask-app.yml
 ```
-Now for the update the kubernets will update each pods by initiating a new replication set   
-To check the rollout status 
+Now for the update the kubernets will update each pods by initiating a new replication set    
+To check the rollout status
 ```bash
 kubectl rollout status deployment.v1.apps/dummy-flask-app
 ```
@@ -146,5 +115,36 @@ docker run -v $CONFIG:/root/.kube/config \
    kubectl:2.2.2 rollout status deployment.v1.apps/dummy-flask-app
 ```
 
-#### 2. Consider having intermidiate RS
-#### 3. Stateful Set
+### Dealing With Reserve IP's in Rollouts
+
+ECP IPool IPs are mapped to a POD until the pod dies. **Which makes rollout complecated with replicaset**. Cause or the new pod template a new replica Set will be created. It will create the PODs first and try to assign the IP from IPool objects.   
+Now as all IP’s are already reserved we will get errors like below:
+```bash
+ Warning  FailedSchedulingIP  6s (x20 over 4m)  default-scheduler  Can't allocate ip from ipool dummy-flask-app-ipool.Error: Operation cannot be fulfilled on ipools "dummy-flask-app-ipool": ipool dummy-flask-app-ipool have not freeip
+```
+
+There are ways to deal with this problem
+
+#### Manage Your ReplicaSet Manually (Not Recomaned)
+
+If we have a replica-count `n` then the reserved IP count should be `n+1`. In this way we always have an additional IP to assign a new pod. Although this might still cause scheduler to try starting a POD before killing one and causing the same problem. Although the scheduler will to retry again and eventually the IP's will be freed.   
+
+> This will cause one dangling IP out of `(n + 1)` IPs
+    
+or,    
+   
+change the deployments to remove the annotation
+```yml
+           annotations:
+                quantil.com/ipool: dummy-flask-app-ipool
+```
+and rollout with no public IPs. It will create an intermediate Replica Set and wait the rollout to finish.   
+Then rollout again with the updated POD template with the added annotation for public IP which creates a second replica Set. 
+
+> This will cause IPs to be down till the second replicaset comes up.  
+
+
+### Stateful Set (Recomanded)
+
+StatefulSets are valuable for applications that require Stable, unique network identifiers. The ipool always work with statefulset.  
+We will talk more about stateful set in the next Lab. 
