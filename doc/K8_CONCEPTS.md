@@ -34,3 +34,8 @@ As overviewed in the [official document](https://kubernetes.io/docs/concepts/)
 > kubectl get sts
 >```
 
+
+#### Nice Reads
+> 1. [statefulsets-deployments](https://blog.thecodeteam.com/2017/08/16/technical-dive-statefulsets-deployments-kubernetes/)
+> 2. [Stateful containerized applications with Kubernetes](https://opensource.com/article/17/2/stateful-applications)
+
