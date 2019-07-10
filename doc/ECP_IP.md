@@ -124,14 +124,16 @@ docker run -v $CONFIG:/root/.kube/config \
 ```
 Once updated you can check the assigned External IPs to corresponding pods in `Annotations`
 ```bash
-kubectl describe pods --selector="app=dummy-flask-app" | grep externalIP
+kubectl describe pods --selector="app=dummy-flask-app" \
+  -o jsonpath='{.items[*].metadata.annotations.quantil\.com/externalIP}'
 ```
 or
 ```bash
 docker run -v $CONFIG:/root/.kube/config \
    -v $CERT:/root/.kube/opseng_cert.pem \
    -v $KEY:/root/.kube/opseng_key.pem \
-   kubectl:2.2.2 describe pods --selector="app=dummy-flask-app" | grep externalIP
+   kubectl:2.2.2 get pods --selector="app=dummy-flask-app" \
+   -o jsonpath='{.items[*].metadata.annotations.quantil\.com/externalIP}'
 ```
 For pod you can get the public IP from the annotion `quantil.com/externalIP` 
 To avail the `External IP` to your container you can pass it by adding environment in Pod Template
