@@ -114,7 +114,7 @@ or
 ```
 docker run -v $CONFIG:/root/.kube/config \
    -v $CERT:/root/.kube/opseng_cert.pem \
-   -v $KEY:/root/.kube/opseng_key.pem \ 
+   -v $KEY:/root/.kube/opseng_key.pem \
    kubectl:2.2.2 create secret docker-registry myregistrykey \
    --docker-server="registry-qcc.quantil.com" \
    --docker-email=swarvanu.sengupta@cdnetworks.co.kr \
