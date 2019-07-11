@@ -43,7 +43,8 @@ We will update the image tag for container from `1.0.0` to `1.5.0`
             - image: registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.5.0
 ```
 
-Although assigning public IP to deployments its not recomanded. Deployment are not for `stateful` resources such as unique network identifiers like Public IP.  
+Although assigning public IP to deployments its not recomanded. Deployment are not recomanded `stateful` resources for pods, such as unique network identifiers like Public IP. 
+
 We can continue with deployment update without public IP.  
 
 ### Updating without Reserve Public IP's
@@ -147,4 +148,79 @@ Then rollout again with the updated POD template with the added annotation for p
 ### Stateful Set (Recomanded)
 
 StatefulSets are valuable for applications that require Stable, unique network identifiers. The ipool always work with statefulset.  
-We will talk more about stateful set in the next Lab. 
+
+The required components of a statefulset are:  
+* A Headless Service (is used to control the network domain).  
+* The StatefulSet, named dummy-flask-app, has a Spec that indicates that 3 replicas of the container will be launched in unique Pods  
+
+To get started first we will create update the `dummy-flask-app.yml` as:
+```yml
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: dummy-flask-app
+  labels:
+    app: dummy-flask-app
+spec:
+  ports:
+  - port: 80
+    name: dummy-flask-app
+  clusterIP: None # ​Statefulsets​ require a ​Headless Service
+  selector:
+    app: dummy-flask-app
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dummy-flask-app
+  namespace: opseng
+spec:
+  selector:
+    matchLabels:
+      app: dummy-flask-app
+  serviceName: "dummy-flask-app"
+  replicas: 3 
+  template:
+    metadata:
+      labels:
+        app: dummy-flask-app
+      annotations:
+        quantil.com/ipool: dummy-flask-app-ipool
+    spec:
+      imagePullSecrets:
+       - name: myregistrykey
+      containers:
+       - image: registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.0.0
+         name: dummy-flask-app
+         resources:
+           requests: 
+             memory: "64Mi" 
+             cpu: "100m"
+           limits:
+             memory: "128Mi"
+             cpu: "200m"
+```
+Before deploying the statefulset we need to stop the earlier deployment
+```bash
+kubectl delete deployment dummy-flask-app
+```
+or
+```bash
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \
+   kubectl:2.2.2 delete deployment dummy-flask-app
+```
+Deploy the `statefulset`
+```bash
+kubectl create -f dummy-flask-app.yml
+```
+or 
+```bash
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \
+   -v $(PWD)/dummy-flask-app.yml:/dummy-flask-app.yml \
+   kubectl:2.2.2 create -f dummy-flask-app.yml
+```
