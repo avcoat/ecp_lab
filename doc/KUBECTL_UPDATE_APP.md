@@ -153,7 +153,7 @@ The required components of a statefulset are:
 * A Headless Service (is used to control the network domain).  
 * The StatefulSet, named dummy-flask-app, has a Spec that indicates that 3 replicas of the container will be launched in unique Pods  
 
-To get started first we will create update the `dummy-flask-app.yml` as:
+To get started first we will create update the `dummy-flask-app.yml` with old image:
 ```yml
 apiVersion: v1 
 kind: Service 
@@ -214,7 +214,7 @@ docker run -v $CONFIG:/root/.kube/config \
 ```
 Deploy the `statefulset`
 ```bash
-kubectl create -f dummy-flask-app.yml
+kubectl apply -f dummy-flask-app.yml
 ```
 or 
 ```bash
@@ -222,5 +222,41 @@ docker run -v $CONFIG:/root/.kube/config \
    -v $CERT:/root/.kube/opseng_cert.pem \
    -v $KEY:/root/.kube/opseng_key.pem \
    -v $(PWD)/dummy-flask-app.yml:/dummy-flask-app.yml \
-   kubectl:2.2.2 create -f dummy-flask-app.yml
+   kubectl:2.2.2 apply -f dummy-flask-app.yml
+```
+
+
+You can verify the stateless set with
+```bash
+kubectl describe sts
+```
+or
+```bash
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \
+   kubectl:2.2.2 describe sts
+```
+
+Now lets update the app version in `dummy-flask-app.yml`
+```yml
+      containers:
+       - image: registry-qcc.quantil.com/oe-tools/dummy-flask-app:1.5.0
+         name: dummy-flask-app
+```
+Once done apply the changes
+```bash
+kubectl apply -f dummy-flask-app.yml
+```
+or 
+```bash
+docker run -v $CONFIG:/root/.kube/config \
+   -v $CERT:/root/.kube/opseng_cert.pem \
+   -v $KEY:/root/.kube/opseng_key.pem \
+   -v $(PWD)/dummy-flask-app.yml:/dummy-flask-app.yml \
+   kubectl:2.2.2 apply -f dummy-flask-app.yml
+```
+Now you can reach the `/_health` api 
+```bash
+curl <IP>:8080/_health
 ```
